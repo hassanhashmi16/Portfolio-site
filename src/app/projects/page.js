@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Github, ExternalLink, ArrowRight } from 'lucide-react';
 
 import Projects from '@/data/projects.json'
@@ -22,14 +23,16 @@ const ProjectCard = ({ project, index, isVisible }) => {
         {/* Show actual image if available and no error, otherwise show placeholder */}
         {project.image && !imageError ? (
           <>
-            <img 
+            <Image 
               src={project.image}
               alt={project.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
               onError={() => setImageError(true)}
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             {/* Overlay for better text visibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent z-10" />
           </>
         ) : (
           // Fallback placeholder design
@@ -50,15 +53,15 @@ const ProjectCard = ({ project, index, isVisible }) => {
         )}
         
         {/* Project number */}
-        <div className="absolute top-4 left-4 w-8 h-8 bg-emerald-500/20 border border-emerald-400/30 rounded-full flex items-center justify-center z-10">
+        <div className="absolute top-4 left-4 w-8 h-8 bg-emerald-500/20 border border-emerald-400/30 rounded-full flex items-center justify-center z-20">
           <span className="text-emerald-400 font-mono text-sm font-bold">0{project.id}</span>
         </div>
         
         {/* Hover overlay */}
-        <div className={`absolute inset-0 bg-gradient-to-t from-emerald-600/10 to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+        <div className={`absolute inset-0 bg-gradient-to-t from-emerald-600/10 to-transparent transition-opacity duration-300 z-10 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
       </div>
 
-      {/* Rest of your component remains the same */}
+      {/* Project Content */}
       <div className="p-6">
         {/* Title */}
         <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors duration-300">
