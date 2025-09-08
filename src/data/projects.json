@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "title": "Roti & Reps",
+    "description": "An AI-powered web app that generates personalized Desi meal plans with recipes, helping users balance fitness goals with traditional South Asian cuisine.",
+    "githubUrl": "https://github.com/hassanhashmi16/Roti-Reps.git",
+    "projectUrl":"https://roti-reps.vercel.app/",
+    "image": "/assets/rotireps.png",
+    "technologies": ["Next.js", "Tailwind CSS", "React", "GeminiAI"]
+  },
+  {
+    "id": 2,
+    "title": "AnonyMessage",
+    "description": "A web app that lets users send anonymous messages to registered users, built to encourage fun, private, and open communication.",
+    "githubUrl": "https://github.com/hassanhashmi16/AnonyMessage",
+    "projectUrl":"",
+    "image": "/assets/anonymessage.png",
+    "technologies": ["Next.js", "MongoDB", "React.js" , "Tailwind CSS"]
+  },
+  {
+    "id": 3,
+    "title": "Music Academy",
+    "description": "A responsive front-end website designed for a music academy, showcasing courses, instructors, and contact details. Explores many components from Accertainity UI",
+    "githubUrl": "https://github.com/hassanhashmi16/Music-Academy",
+    "image": "/assets/musicacademy.png",
+    "technologies": ["Next.js", "Tailwind CSS", "Accertainity UI"]
+  },
+  {
+    "id": 4,
+    "title": "Linkfree",
+    "description": "A Linktree-inspired web app that lets users create a personalized page to share multiple profile and social media links in one place.",
+    "githubUrl": "https://github.com/hassanhashmi16/Linkfree",
+    "image": "/assets/linkfree.png",
+    "technologies": ["Next.js", "Tailwind CSS"]
+  },
+  {
+    "id": 5,
+    "title": "Weather App",
+    "description": "A simple weather app showing real-time weather updates of cities all around the globe.",
+    "githubUrl": "https://github.com/hassanhashmi16/Weather-app",
+    "image": "/assets/weatherapp.png",
+    "technologies": ["React.js", "Tailwind CSS", "Openweather API"]
+  }
+]
