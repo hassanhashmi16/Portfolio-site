@@ -184,7 +184,7 @@ const ProjectsPage = () => {
             </span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            A collection of projects I've worked on, showcasing my skills in modern web development 
+            A collection of projects I have worked on, showcasing my skills in modern web development 
             and full-stack solutions.
           </p>
         </div>
