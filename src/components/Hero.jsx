@@ -31,7 +31,7 @@ const Hero = () => {
   const techStack = ['Next.js', 'MongoDB', 'React', 'Node.js', 'Tailwind CSS'];
 
   return (
-    <section className="relative h-screen bg-black overflow-hidden">
+    <section className="relative h-[121vh] bg-black overflow-hidden">
       {/* Dynamic background elements */}
       <div className="absolute inset-0">
         {/* Moving gradient orbs */}
