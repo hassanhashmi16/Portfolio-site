@@ -37,7 +37,7 @@
     "id": 5,
     "title": "BiTLiNKS",
     "description": "A UI friendly fullstack URL shortener",
-    "githubUrl": "https://github.com/hassanhashmi16/Weather-app",
+    "githubUrl": "https://github.com/hassanhashmi16/BiTLiNKS",
     "image": "/assets/bitlinks.png",
     "technologies": ["Next.js", "Tailwind CSS", "ExpressJS", "MongoDB"]
   },
