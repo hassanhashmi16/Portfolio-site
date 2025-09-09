@@ -35,10 +35,19 @@
   },
   {
     "id": 5,
+    "title": "BiTLiNKS",
+    "description": "A UI friendly fullstack URL shortener",
+    "githubUrl": "https://github.com/hassanhashmi16/Weather-app",
+    "image": "/assets/bitlinks.png",
+    "technologies": ["Next.js", "Tailwind CSS", "ExpressJS", "MongoDB"]
+  },
+  {
+    "id": 6,
     "title": "Weather App",
     "description": "A simple weather app showing real-time weather updates of cities all around the globe.",
     "githubUrl": "https://github.com/hassanhashmi16/Weather-app",
     "image": "/assets/weatherapp.png",
     "technologies": ["React.js", "Tailwind CSS", "Openweather API"]
   }
+  
 ]
