@@ -67,7 +67,6 @@ const Projects = () => {
         <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <div className="flex items-end gap-6 mb-8">
             <div className="flex flex-col">
-              <span className="text-emerald-400 font-mono text-sm tracking-wider mb-2">02.</span>
               <h2 className="text-4xl md:text-6xl font-bold text-gray-400">Featured</h2>
             </div>
             <div className="pb-2">
