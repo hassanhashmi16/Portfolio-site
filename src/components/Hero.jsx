@@ -1,190 +1,348 @@
 'use client'
-import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, ArrowRight, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Github, Linkedin, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useScroll,
+} from 'framer-motion';
 
-const Hero = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
+// ── Split text reveal ─────────────────────────────────────────────────────────
+const SplitReveal = ({ text, delay = 0, className = '' }) => (
+  <span aria-label={text} className={`inline-flex ${className}`}>
+    {text.split('').map((char, i) => (
+      <motion.span
+        key={i}
+        className="inline-block"
+        initial={{ y: '110%', opacity: 0 }}
+        animate={{ y: '0%', opacity: 1 }}
+        transition={{ delay: delay + i * 0.04, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {char === ' ' ? '\u00A0' : char}
+      </motion.span>
+    ))}
+  </span>
+);
 
-  const router = useRouter()
-
-  const pushtolinkedin = () => {
-    router.push('https://www.linkedin.com/in/hassansaeedhashmi/')
-  }
-
-  useEffect(() => {
-    setIsVisible(true);
-    
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const techStack = ['Next.js', 'MongoDB', 'React', 'Node.js', 'Tailwind CSS'];
+// ── Magnetic button ───────────────────────────────────────────────────────────
+const Magnetic = ({ children, strength = 0.3 }) => {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 180, damping: 20 });
+  const sy = useSpring(y, { stiffness: 180, damping: 20 });
 
   return (
-    <section className="relative h-[121vh] bg-black overflow-hidden">
-      {/* Dynamic background elements */}
-      <div className="absolute inset-0">
-        {/* Moving gradient orbs */}
-        <div 
-          className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-3xl"
-          style={{
-            transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
-            transition: 'transform 0.8s ease-out',
-            left: '10%',
-            top: '20%'
-          }}
-        />
-        <div 
-          className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-zinc-600/5 to-slate-600/5 blur-2xl"
-          style={{
-            transform: `translate(${-mousePosition.x * 0.03}px, ${-mousePosition.y * 0.03}px)`,
-            transition: 'transform 0.6s ease-out',
-            right: '15%',
-            bottom: '25%'
-          }}
-        />
-        
-        {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="h-full w-full" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-      </div>
+    <motion.div
+      ref={ref}
+      style={{ x: sx, y: sy }}
+      onMouseMove={(e) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        x.set((e.clientX - (r.left + r.width / 2)) * strength);
+        y.set((e.clientY - (r.top + r.height / 2)) * strength);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
-      {/* Main content - asymmetrical layout */}
-      <div className="relative z-10 h-full flex">
-        
-        {/* Left side - Main content */}
-        <div className="flex-1 flex flex-col justify-center pl-8 md:pl-16 lg:pl-24 max-w-4xl">
-          
-          {/* Small intro text */}
-          <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <p className="text-emerald-400 font-mono text-sm mb-4 tracking-wider">FULL STACK DEVELOPER</p>
+// ── Floating orb ──────────────────────────────────────────────────────────────
+const Orb = ({ className, dur, delay }) => (
+  <motion.div
+    className={`absolute rounded-full pointer-events-none ${className}`}
+    animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+    transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
+  />
+);
+
+// ── Hero ──────────────────────────────────────────────────────────────────────
+export default function Hero() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const glowX = useSpring(mouseX, { stiffness: 50, damping: 18 });
+  const glowY = useSpring(mouseY, { stiffness: 50, damping: 18 });
+  const { scrollY } = useScroll();
+  const contentY = useTransform(scrollY, [0, 500], [0, -60]);
+  const heroOpacity = useTransform(scrollY, [0, 350], [1, 0]);
+
+  useEffect(() => {
+    const onMove = (e) => { mouseX.set(e.clientX); mouseY.set(e.clientY); };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  const techStack = [
+    { label: 'Next.js',    pct: 92 },
+    { label: 'MongoDB',    pct: 85 },
+    { label: 'React',      pct: 95 },
+    { label: 'Node.js',    pct: 80 },
+    { label: 'Tailwind',   pct: 90 },
+  ];
+
+  return (
+    <section className="relative min-h-screen bg-zinc-950 flex items-center overflow-hidden">
+
+      {/* ── subtle dot grid ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+        style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '36px 36px' }} />
+
+      {/* ── moving scanline ── */}
+      <motion.div
+        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"
+        animate={{ top: ['0%', '100%'] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+      />
+
+      {/* ── cursor glow ── */}
+      <motion.div
+        className="fixed pointer-events-none z-30 w-[500px] h-[500px] rounded-full mix-blend-screen"
+        style={{
+          x: glowX, y: glowY,
+          translateX: '-50%', translateY: '-50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 65%)',
+        }}
+      />
+
+      {/* ── ambient orbs ── */}
+      <Orb className="w-[600px] h-[600px] bg-white/3 blur-[140px] -top-1/4 -left-1/4" dur={16} delay={0} />
+      <Orb className="w-[400px] h-[400px] bg-white/2 blur-[100px] -bottom-1/4 -right-1/4" dur={20} delay={3} />
+
+      {/* ── Content ── */}
+      <motion.div
+        style={{ y: contentY, opacity: heroOpacity }}
+        className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-24 flex flex-col lg:flex-row lg:items-center gap-16 pt-24 pb-16"
+      >
+        {/* LEFT: Text ─────────────────────────────────────────────────── */}
+        <div className="flex-1 min-w-0">
+
+          {/* Status chip */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.55 }}
+            className="inline-flex items-center gap-2 mb-10 px-3 py-1.5 border border-white/10 bg-white/5"
+          >
+            <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.8, repeat: Infinity }} className="w-1.5 h-1.5 rounded-full bg-white/60" />
+            <span className="font-mono text-[11px] text-white/50 tracking-[0.2em] uppercase">Full Stack Developer · Available</span>
+          </motion.div>
+
+          {/* HASSAN — overflow hidden clip */}
+          <div className="overflow-hidden leading-none mb-1">
+            <h1 className="text-[clamp(3.5rem,11vw,9.5rem)] font-black text-white tracking-tighter leading-none">
+              <SplitReveal text="HASSAN" delay={0.2} />
+            </h1>
           </div>
 
-          {/* Large name */}
-          <div className={`transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-2 leading-tight">
-              Hassan Saeed
-            </h1>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 mb-8 leading-tight">
-              Hashmi
+          {/* HASHMI — each letter individually colored */}
+          <div className="overflow-hidden leading-none mb-10">
+            <h1 className="text-[clamp(3.5rem,11vw,9.5rem)] font-black tracking-tighter leading-none">
+              {[
+                { char: 'H', color: '#e4e4e7' },
+                { char: 'A', color: '#d4d4d8' },
+                { char: 'S', color: '#c4c4cc' },
+                { char: 'H', color: '#b4b4c0' },
+                { char: 'M', color: '#a4a4b4' },
+                { char: 'I', color: '#9494a8' },
+              ].map(({ char, color }, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block"
+                  initial={{ y: '110%', opacity: 0 }}
+                  animate={{ y: '0%', opacity: 1 }}
+                  transition={{ delay: 0.5 + i * 0.046, duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ color, willChange: 'transform, opacity' }}
+                >
+                  {char}
+                </motion.span>
+              ))}
             </h1>
           </div>
 
           {/* Description */}
-          <div className={`transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <p className="text-xl text-gray-300 max-w-2xl mb-12 leading-relaxed">
-              Passionate about building modern web applications with Next.js and MongoDB. 
-              I craft digital experiences that are both beautiful and functional.
-            </p>
-          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0, duration: 0.65 }}
+            className="text-white/40 text-lg max-w-md mb-12 leading-relaxed font-light"
+          >
+            Crafting high-performance web experiences with{' '}
+            <span className="text-white/70">Next.js</span> and{' '}
+            <span className="text-white/70">MongoDB</span>. Precision engineering meets considered design.
+          </motion.p>
 
-          {/* Buttons */}
-          <div className={`transform transition-all duration-1000 delay-600 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <div className="flex flex-wrap gap-6 mb-16">
-              <Link href='/projects'>
-              <button  className="group relative px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all duration-300 flex items-center gap-3 hover:gap-4 shadow-lg hover:shadow-emerald-500/25">
-                View My Work
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-              </button></Link>
-              
-              <Link href='https://github.com/hassanhashmi16' target='blank'><button className="group px-8 py-4 border border-gray-600 hover:border-gray-400 text-white font-semibold rounded-lg transition-all duration-300 flex items-center gap-3 hover:bg-gray-800/50">
-                <Github size={20} className="group-hover:scale-110 transition-transform duration-300" />
-                GitHub
-              </button></Link>
-              
-              <Link href='https://www.linkedin.com/in/hassansaeedhashmi/' target='blank'><button className="group px-8 py-4 border border-gray-600 hover:border-gray-400 text-white font-semibold rounded-lg transition-all duration-300 flex items-center gap-3 hover:bg-gray-800/50">
-                <Linkedin size={20} className="group-hover:scale-110 transition-transform duration-300" />
-                LinkedIn
-              </button></Link>
-            </div>
-          </div>
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.18, duration: 0.6 }}
+            className="flex flex-wrap items-center gap-4 mb-16 relative z-20"
+          >
+            <Link href="/projects">
+              <Magnetic>
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  className="group relative flex items-center gap-3 px-7 py-3.5 bg-white text-zinc-900 font-mono font-bold text-sm tracking-widest uppercase overflow-hidden"
+                >
+                  <motion.span
+                    className="absolute inset-0 bg-zinc-200 origin-left"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                  />
+                  <span className="relative z-10 flex items-center gap-3">
+                    View Work
+                    <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                  </span>
+                </motion.button>
+              </Magnetic>
+            </Link>
+
+            {[
+              { href: 'https://github.com/hassanhashmi16', Icon: Github, label: 'GitHub' },
+              { href: 'https://www.linkedin.com/in/hassansaeedhashmi/', Icon: Linkedin, label: 'LinkedIn' },
+            ].map(({ href, Icon, label }) => (
+              <Link key={label} href={href} target="_blank">
+                <Magnetic>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    className="group flex items-center gap-2.5 px-6 py-3.5 border border-white/15 hover:border-white/40 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white font-mono text-sm tracking-wider transition-all duration-300"
+                  >
+                    <Icon size={15} className="group-hover:scale-110 transition-transform" />
+                    {label}
+                  </motion.button>
+                </Magnetic>
+              </Link>
+            ))}
+          </motion.div>
+
+          {/* Tech pills */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4, duration: 0.5 }}
+            className="flex flex-wrap gap-2"
+          >
+            {['Next.js', 'React', 'MongoDB', 'Node.js', 'Tailwind'].map((tech, i) => (
+              <motion.span
+                key={tech}
+                initial={{ opacity: 0, y: 8, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.45 + i * 0.07, type: 'spring', stiffness: 220 }}
+                whileHover={{ y: -2, borderColor: 'rgba(255,255,255,0.25)' }}
+                className="px-3 py-1 border border-white/8 text-white/30 text-xs font-mono uppercase tracking-widest hover:text-white/60 transition-colors duration-300 cursor-default"
+              >
+                {tech}
+              </motion.span>
+            ))}
+          </motion.div>
         </div>
 
-        {/* Right side - Tech stack vertical layout */}
-        <div className="hidden lg:flex flex-col justify-center pr-16 xl:pr-24">
-          <div className={`transform transition-all duration-1000 delay-800 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}`}>
-            
-            {/* Tech stack label */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-px bg-gradient-to-r from-emerald-400 to-transparent" />
-                <span className="text-emerald-400 font-mono text-sm tracking-wider">TECH STACK</span>
-              </div>
+        {/* RIGHT: Skills panel ─────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden lg:block w-72 shrink-0"
+        >
+          <div className="relative border border-white/10 bg-white/3 backdrop-blur-xl p-6">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/8">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                className="w-4 h-4 border-2 border-t-white/70 border-r-white/70 border-b-transparent border-l-transparent rounded-full"
+              />
+              <span className="text-white/30 font-mono text-[10px] tracking-[0.25em] uppercase">Core Stack</span>
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 1.4, repeat: Infinity }}
+                className="ml-auto text-white/30 font-mono text-[10px]"
+              >
+                LIVE
+              </motion.span>
             </div>
 
-            {/* Tech items */}
-            <div className="space-y-4">
-              {techStack.map((tech, index) => (
-                <div
-                  key={tech}
-                  className={`group relative py-3 px-6 bg-gray-900/30 border border-gray-800 hover:border-gray-600 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:translate-x-2 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}`}
-                  style={{
-                    transitionDelay: `${800 + index * 100}ms`
-                  }}
+            {/* Skill bars */}
+            <div className="space-y-5">
+              {techStack.map(({ label, pct }, i) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.0 + i * 0.1, duration: 0.5 }}
                 >
-                  <span className="text-gray-300 group-hover:text-white font-medium transition-colors duration-300">
-                    {tech}
-                  </span>
-                  <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-emerald-400 to-teal-400 rounded-l-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-mono text-xs text-white/50">{label}</span>
+                    <motion.span
+                      className="font-mono text-[10px] text-white/30"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.5 + i * 0.1 }}
+                    >
+                      {pct}%
+                    </motion.span>
+                  </div>
+                  <div className="h-px bg-white/8 overflow-hidden">
+                    <motion.div
+                      className="h-full bg-white/40"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: pct / 100 }}
+                      transition={{ delay: 0.9 + i * 0.1, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ transformOrigin: 'left' }}
+                    />
+                  </div>
+                </motion.div>
               ))}
             </div>
 
-            {/* Decorative element */}
-            <div className="mt-12 relative">
-              <div className="w-px h-24 bg-gradient-to-b from-emerald-400/50 to-transparent mx-auto" />
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
+            {/* Footer */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.9 }}
+              className="mt-8 flex items-center gap-3 pt-4 border-t border-white/8"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.4, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-2 h-2 rounded-full bg-white/40 shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+              />
+              <span className="text-white/30 font-mono text-[10px] uppercase tracking-widest">Open to Work</span>
+            </motion.div>
 
-      {/* Bottom decorative line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
-      
-      {/* Corner accents */}
-      <div className="absolute top-8 left-8">
-        <div className="w-8 h-8 border-l-2 border-t-2 border-emerald-400/30" />
-      </div>
-      <div className="absolute bottom-8 right-8">
-        <div className="w-8 h-8 border-r-2 border-b-2 border-emerald-400/30" />
-      </div>
-
-      {/* Mobile tech stack - horizontal at bottom */}
-      <div className="lg:hidden absolute bottom-12 left-0 right-0 px-8">
-        <div className={`transform transition-all duration-1000 delay-800 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-px bg-gradient-to-r from-emerald-400 to-transparent" />
-            <span className="text-emerald-400 font-mono text-xs tracking-wider">TECH STACK</span>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {techStack.map((tech) => (
-              <span
-                key={tech}
-                className="px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-full text-gray-300 text-sm font-medium hover:border-gray-600 hover:text-white transition-all duration-300"
-              >
-                {tech}
-              </span>
+            {/* Corner brackets */}
+            {['top-0 left-0 border-t border-l', 'top-0 right-0 border-t border-r', 'bottom-0 left-0 border-b border-l', 'bottom-0 right-0 border-b border-r'].map((c, i) => (
+              <div key={i} className={`absolute w-3 h-3 border-white/20 ${c}`} />
             ))}
           </div>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Scroll indicator ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.1, duration: 0.8 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-white/20 font-mono text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+        <div className="w-px h-10 bg-white/10 overflow-hidden relative">
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-1/2 bg-white/30"
+            animate={{ y: ['0%', '200%'] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          />
         </div>
-      </div>
+      </motion.div>
+
+      {/* Bottom fade into next section */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-zinc-50 to-transparent pointer-events-none" />
     </section>
   );
-};
-
-export default Hero;
+}

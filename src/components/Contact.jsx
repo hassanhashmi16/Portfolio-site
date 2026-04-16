@@ -2,221 +2,241 @@
 
 import { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
-import { Send, CheckCircle, AlertCircle, User, Mail, MessageSquare } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle, Lock } from 'lucide-react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 
-export default function Contact() {
-  const formRef = useRef(null);
-  const [status, setStatus] = useState(null); // 'sending' | 'success' | 'error' | null
-  const [errorMsg, setErrorMsg] = useState('');
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
+// ── Typewriter ────────────────────────────────────────────────────────────────
+const Typewriter = ({ lines, started }) => {
+  const [done, setDone] = useState([]);
+  const [lineIdx, setLineIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
 
   useEffect(() => {
-    setIsVisible(true);
-    
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
+    if (!started || lineIdx >= lines.length) return;
+    const line = lines[lineIdx];
+    const t = setTimeout(() => {
+      if (charIdx <= line.length) {
+        setDone((prev) => { const u = [...prev]; u[lineIdx] = line.slice(0, charIdx); return u; });
+        setCharIdx((c) => c + 1);
+      } else {
+        setTimeout(() => { setLineIdx((l) => l + 1); setCharIdx(0); }, 450);
+      }
+    }, charIdx === line.length ? 0 : 28);
+    return () => clearTimeout(t);
+  }, [started, lineIdx, charIdx, lines]);
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  return (
+    <div className="font-mono text-xs leading-6 text-zinc-500">
+      {lines.map((line, i) => (
+        <div key={i} className={`flex gap-2 ${i > lineIdx ? 'invisible' : ''}`}>
+          <span className="text-zinc-300 shrink-0">$</span>
+          <span className="text-zinc-600">
+            {done[i] ?? ''}
+            {i === lineIdx && (
+              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.55, repeat: Infinity }}
+                className="inline-block w-1.5 h-3.5 bg-zinc-400 ml-0.5 align-middle" />
+            )}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── Animated field ─────────────────────────────────────────────────────────────
+const Field = ({ label, code, name, as = 'input', delay = 0, ...props }) => {
+  const [focused, setFocused] = useState(false);
+  const Tag = as;
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.label animate={{ color: focused ? '#27272a' : '#a1a1aa' }} transition={{ duration: 0.2 }}
+        className="block font-mono text-[10px] tracking-[0.25em] uppercase mb-2">
+        <span className="text-zinc-300 mr-1">{code}</span>{label}
+      </motion.label>
+      <div className="relative">
+        <Tag
+          name={name}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className="w-full bg-transparent border-0 border-b text-zinc-900 text-sm placeholder-zinc-300 py-3 px-0 focus:outline-none resize-none transition-colors font-sans"
+          style={{ borderColor: focused ? '#27272a' : '#e4e4e7' }}
+          {...props}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 h-px bg-zinc-900"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: focused ? 1 : 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          style={{ transformOrigin: 'left', right: 0 }}
+        />
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+export default function Contact() {
+  const formRef = useRef(null);
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const [status, setStatus] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const terminalLines = [
+    'ssh hassan@portfolio.dev',
+    'Connection established.',
+    'Encryption: AES-256-GCM',
+    'Awaiting your message...',
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
-    setErrorMsg('');
-
-    // Prefer reading from env vars (NEXT_PUBLIC_...) — fall back to placeholders for dev
-    const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_xxx';
-    const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_xxx';
-    const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'public_key_xxx';
-
     try {
-      // sendForm collects inputs from the form element automatically
-      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY);
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_xxx',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_xxx',
+        formRef.current,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'public_key_xxx',
+      );
       setStatus('success');
       formRef.current.reset();
     } catch (err) {
-      console.error('EmailJS send error:', err);
-      setErrorMsg(err?.text || 'Failed to send message. Try again later.');
+      setErrorMsg(err?.text || 'Failed. Try again.');
       setStatus('error');
     } finally {
-      // optional: allow next send after a tiny delay or immediately
-      setTimeout(() => setStatus(null), 4000);
+      setTimeout(() => setStatus(null), 5000);
     }
   };
 
   return (
-    <section className="relative min-h-screen bg-black py-16 px-8 md:px-16 lg:px-24 overflow-hidden">
-      {/* Dynamic background elements matching hero */}
-      <div className="absolute inset-0">
-        {/* Moving gradient orbs */}
-        <div 
-          className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-3xl"
-          style={{
-            transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
-            transition: 'transform 0.8s ease-out',
-            left: '60%',
-            top: '10%'
-          }}
-        />
-        <div 
-          className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-zinc-600/5 to-slate-600/5 blur-2xl"
-          style={{
-            transform: `translate(${-mousePosition.x * 0.03}px, ${-mousePosition.y * 0.03}px)`,
-            transition: 'transform 0.6s ease-out',
-            left: '10%',
-            bottom: '20%'
-          }}
-        />
-        
-        {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="h-full w-full" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-      </div>
+    <section id="contact" ref={sectionRef} className="relative bg-white py-36 px-6 md:px-12 lg:px-24 overflow-hidden border-t border-zinc-100">
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header Section */}
-        <div className={`text-center mb-16 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <p className="text-emerald-400 font-mono text-sm mb-4 tracking-wider">GET IN TOUCH</p>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            Let's Work 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 ml-4">
-              Together
-            </span>
-          </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Have a project in mind? Let's discuss how we can bring your ideas to life.
-          </p>
+      {/* Large background number */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 text-[20rem] font-black text-zinc-50 leading-none pointer-events-none select-none hidden lg:block">03</div>
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-20">
+          <div className="overflow-hidden mb-2">
+            <motion.span
+              initial={{ y: 24 }}
+              animate={inView ? { y: 0 } : {}}
+              transition={{ duration: 0.55 }}
+              className="flex items-center gap-2 font-mono text-xs text-zinc-400 tracking-[0.3em] uppercase"
+            >
+              <Lock size={10} />
+              Get in touch
+            </motion.span>
+          </div>
+          <div className="overflow-hidden">
+            <motion.h2
+              initial={{ y: 80 }}
+              animate={inView ? { y: 0 } : {}}
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+              className="text-6xl md:text-8xl font-black text-zinc-900 tracking-tighter"
+            >
+              Let's Talk
+            </motion.h2>
+          </div>
         </div>
 
-        {/* Content Container */}
-        <div className="flex flex-col lg:flex-row gap-16 items-start justify-center">
-          
-          {/* Left side - Contact info */}
-          <div className={`lg:w-1/3 transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <div className="space-y-8">
-              <div className="group">
-                <h3 className="text-2xl font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors duration-300">
-                  Let's Connect
-                </h3>
-                <p className="text-gray-300 leading-relaxed">
-                  I'm always interested in new opportunities and exciting projects. 
-                  Whether you have a question or just want to say hi, feel free to reach out!
-                </p>
+        <div className="grid lg:grid-cols-5 gap-14 lg:gap-20">
+          {/* Left: Terminal */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            className="lg:col-span-2 flex flex-col gap-8"
+          >
+            <div className="border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800 bg-zinc-900">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+                <span className="ml-3 font-mono text-[10px] text-zinc-600 tracking-wider">terminal — zsh</span>
               </div>
-              
-              <div className="space-y-4">
-                {/* <div className="flex items-center gap-4 p-4 bg-gray-900/30 border border-gray-800 rounded-lg hover:border-gray-600 hover:bg-gray-800/50 transition-all duration-300">
-                  <Mail className="text-emerald-400" size={20} />
-                  <span className="text-gray-300">hassan@example.com</span>
-                </div> */}
-                <div className="flex items-center gap-4 p-4 bg-gray-900/30 border border-gray-800 rounded-lg hover:border-gray-600 hover:bg-gray-800/50 transition-all duration-300">
-                  <MessageSquare className="text-emerald-400" size={20} />
-                  <span className="text-gray-300">Response within 24 hours</span>
-                </div>
+              <div className="p-5 min-h-[160px] relative">
+                <div className="absolute inset-0 pointer-events-none opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 1px, transparent 1px, transparent 3px)', backgroundSize: '100% 3px' }} />
+                <Typewriter lines={terminalLines} started={inView} />
               </div>
             </div>
-          </div>
 
-          {/* Right side - Form (EXACT ORIGINAL FUNCTIONALITY) */}
-          <div className={`lg:w-1/2 transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}`}>
-            <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-              
-              <label className="block">
-                <span className="flex items-center gap-3 text-gray-300 font-medium mb-3 text-lg">
-                  <User size={18} className="text-emerald-400" />
-                  Your name
-                </span>
-                <input 
-                  name="name" 
-                  required 
-                  className="w-full px-6 py-4 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-400 focus:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 transition-all duration-300"
-                  placeholder="Enter your full name"
-                />
-              </label>
+            <div className="border border-zinc-200 p-6 bg-zinc-50 space-y-5">
+              <div>
+                <p className="font-mono text-[10px] text-zinc-400 tracking-widest uppercase mb-1">Status</p>
+                <div className="flex items-center gap-2">
+                  <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-2 h-2 rounded-full bg-zinc-900" />
+                  <span className="text-zinc-700 text-sm font-light">Available for new projects</span>
+                </div>
+              </div>
+              <div>
+                <p className="font-mono text-[10px] text-zinc-400 tracking-widest uppercase mb-1">Response</p>
+                <p className="text-zinc-700 text-sm font-light">Within 24 hours</p>
+              </div>
+            </div>
+          </motion.div>
 
-              <label className="block">
-                <span className="flex items-center gap-3 text-gray-300 font-medium mb-3 text-lg">
-                  <Mail size={18} className="text-emerald-400" />
-                  Your email
-                </span>
-                <input 
-                  name="email" 
-                  type="email" 
-                  required 
-                  className="w-full px-6 py-4 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-400 focus:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 transition-all duration-300"
-                  placeholder="your.email@example.com"
-                />
-              </label>
+          {/* Right: Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.28 }}
+            className="lg:col-span-3"
+          >
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-10">
+              <Field label="Your Name" code="01." name="name" required delay={0.35} placeholder="Full name" />
+              <Field label="Email Address" code="02." name="email" type="email" required delay={0.45} placeholder="your@email.com" />
+              <Field label="Message" code="03." name="message" as="textarea" required rows={5} delay={0.55} placeholder="Tell me about your project..." />
 
-              <label className="block">
-                <span className="flex items-center gap-3 text-gray-300 font-medium mb-3 text-lg">
-                  <MessageSquare size={18} className="text-emerald-400" />
-                  Message
-                </span>
-                <textarea 
-                  name="message" 
-                  rows="6" 
-                  required 
-                  className="w-full px-6 py-4 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-400 focus:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 transition-all duration-300 resize-none"
-                  placeholder="Tell me about your project or just say hello..."
-                />
-              </label>
-
-              <button 
-                type="submit" 
+              <motion.button
+                type="submit"
                 disabled={status === 'sending'}
-                className="group relative w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:gap-4 shadow-lg hover:shadow-emerald-500/25 disabled:shadow-none"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65 }}
+                whileHover={status !== 'sending' ? { scale: 1.015 } : {}}
+                whileTap={{ scale: 0.97 }}
+                className="group relative overflow-hidden w-full py-4 bg-zinc-900 text-white font-mono font-black text-sm tracking-[0.15em] uppercase disabled:bg-zinc-200 disabled:text-zinc-400 transition-all duration-300"
               >
-                {status === 'sending' ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                    Sending…
-                  </>
-                ) : (
-                  <>
-                    Send message
-                    <Send size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-                  </>
+                <motion.span
+                  className="absolute inset-0 bg-zinc-700 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                />
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  {status === 'sending' ? (
+                    <>
+                      <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>Send Message<Send size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
+                  )}
+                </span>
+              </motion.button>
+
+              <AnimatePresence>
+                {status === 'success' && (
+                  <motion.div key="ok" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-3 text-zinc-700 font-mono text-sm border border-zinc-200 bg-zinc-50 p-4">
+                    <CheckCircle size={16} className="text-zinc-900" />
+                    Message sent — I'll get back to you soon.
+                  </motion.div>
                 )}
-              </button>
-
-              {status === 'success' && (
-                <p role="status" className="flex items-center gap-3 p-4 bg-emerald-900/20 border border-emerald-700 rounded-lg text-emerald-400">
-                  <CheckCircle size={20} />
-                  Message sent — thank you! ✅
-                </p>
-              )}
-              
-              {status === 'error' && (
-                <p role="alert" className="flex items-center gap-3 p-4 bg-red-900/20 border border-red-700 rounded-lg text-red-400">
-                  <AlertCircle size={20} />
-                  Error: {errorMsg}
-                </p>
-              )}
+                {status === 'error' && (
+                  <motion.div key="err" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-3 text-red-700 font-mono text-sm border border-red-200 bg-red-50 p-4">
+                    <AlertCircle size={16} />
+                    {errorMsg}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </form>
-          </div>
+          </motion.div>
         </div>
-      </div>
-
-      {/* Bottom decorative line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
-      
-      {/* Corner accents */}
-      <div className="absolute top-8 left-8">
-        <div className="w-8 h-8 border-l-2 border-t-2 border-emerald-400/30" />
-      </div>
-      <div className="absolute bottom-8 right-8">
-        <div className="w-8 h-8 border-r-2 border-b-2 border-emerald-400/30" />
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 export const metadata = {
   title: "Portfolio of Hassan Hashmi – Full Stack Web Developer",
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
       <body
         className={`antialiased`}
       >
+        <Navbar />
         {children}
       </body>
     </html>
