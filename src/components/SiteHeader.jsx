@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const links = [
-  ["About", "#about"],
-  ["Experience", "#experience"],
-  ["Work", "#work"],
-  ["Writing", "#writing"],
+  ["About", "about"],
+  ["Experience", "experience"],
+  ["Work", "work"],
+  ["Writing", "writing"],
 ];
 
 export default function SiteHeader({ archive = false }) {
@@ -36,20 +35,20 @@ export default function SiteHeader({ archive = false }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const href = (hash) => (archive ? `/${hash}` : hash);
+  const href = (id) => (archive ? `/#${id}` : `#${id}`);
 
   return (
     <header className={`site-header${hidden ? " is-hidden" : ""}`}>
-      <Link className="wordmark" href={archive ? "/#home" : "#home"} aria-label="Hassan Hashmi, home">HH<span>.</span></Link>
+      <a className="wordmark" href={archive ? "/#home" : "#home"} aria-label="Hassan Hashmi, home">HH<span>.</span></a>
       <nav className="desktop-nav" aria-label="Main navigation">
-        {links.map(([label, hash]) => <Link key={label} href={href(hash)}>{label}</Link>)}
+        {links.map(([label, id]) => <a key={label} href={href(id)}>{label}</a>)}
       </nav>
       <div className="header-actions">
-        <Link className="contact-link" href={href("#contact")}>Let’s talk <ArrowUpRight size={14} /></Link>
+        <a className="contact-link" href={href("contact")}>Let’s talk <ArrowUpRight size={14} /></a>
         <ThemeToggle />
       </div>
       <nav className="mobile-nav" aria-label="Mobile navigation">
-        {links.map(([label, hash]) => <Link key={label} href={href(hash)}>{label}</Link>)}
+        {links.map(([label, id]) => <a key={label} href={href(id)}>{label}</a>)}
       </nav>
     </header>
   );

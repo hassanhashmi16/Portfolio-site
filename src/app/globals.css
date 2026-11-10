@@ -9,6 +9,8 @@
   --accent: #5f615d;
   /* portrait panel background — change freely to any colour */
   --portrait-bg: #303136;
+  /* highlighter swipe behind important lines */
+  --hl: rgba(32, 32, 30, .14);
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
   --mono: "SFMono-Regular", ui-monospace, "Cascadia Code", Consolas, monospace;
@@ -26,6 +28,7 @@
   --line-strong: #5b5a55;
   --accent: #c4c3ba;
   --portrait-bg: #303136;
+  --hl: rgba(232, 231, 225, .16);
 }
 
 * { box-sizing: border-box; }
@@ -46,16 +49,19 @@ button { color: inherit; font: inherit; }
 img { display: block; }
 strong { font-weight: 600; }
 
-/* highlight/marker on important lines */
+/* highlighter swipe on important lines (like a marker on paper) */
 .mark {
-  background-image: linear-gradient(var(--ink), var(--ink));
+  background-image: linear-gradient(var(--hl), var(--hl));
   background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 100% 2px;
-  padding-bottom: .07em;
-  transition: background-size .9s cubic-bezier(.2, .7, .2, 1);
+  background-position: 0 0;
+  background-size: 100% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: .04em .18em;
+  margin: 0 -.18em;
+  transition: background-size .8s cubic-bezier(.2, .7, .2, 1);
 }
-.reveal:not(.is-visible) .mark { background-size: 0% 2px; }
+.reveal:not(.is-visible) .mark { background-size: 0% 100%; }
 
 /* ---------- header ---------- */
 .site-header {
@@ -252,7 +258,7 @@ strong { font-weight: 600; }
 
 @media (scripting: none) {
   .reveal { opacity: 1; filter: none; transform: none; }
-  .mark { background-size: 100% 2px; }
+  .mark { background-size: 100% 100%; }
 }
 
 @media (min-width: 1500px) { .hero { min-height: min(1080px, 100svh); } }
@@ -311,5 +317,5 @@ strong { font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .reveal { opacity: 1; filter: none; transform: none; }
-  .mark { background-size: 100% 2px; }
+  .mark { background-size: 100% 100%; }
 }

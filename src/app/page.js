@@ -98,7 +98,7 @@ export default function Home() {
         <div className="hero-copy">
           <Reveal><p className="eyebrow"><span className="status-dot" /> AI engineer · full-stack developer</p></Reveal>
           <Reveal delay={90}><h1>I build thoughtful<br /><em>AI experiences.</em></h1></Reveal>
-          <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel <strong>clear, useful, and human.</strong></p></Reveal>
+          <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel <strong className="mark">clear, useful, and human</strong>.</p></Reveal>
           <Reveal delay={260} className="hero-actions">
             <a className="text-link" href="#work">Explore selected work <ArrowDown size={15} /></a>
             <span className="hero-note">Based in Lahore, Pakistan</span>
