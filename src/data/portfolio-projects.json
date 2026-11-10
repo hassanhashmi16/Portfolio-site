@@ -1,0 +1,26 @@
+[
+  {
+    "id": "whythediff",
+    "title": "WhyTheDiff",
+    "type": "AI product · evidence-led investigation",
+    "summary": "An application that follows public GitHub code, history, and discussions to produce cited explanations. Findings distinguish documented reasons, inferences, and unresolved questions.",
+    "tags": ["AI agents", "Retrieval", "Evidence"],
+    "href": "https://github.com/hassanhashmi16/whythediff"
+  },
+  {
+    "id": "eight-thousanders-rag",
+    "title": "Eight-Thousanders RAG Assistant",
+    "type": "Retrieval · evaluation",
+    "summary": "A focused retrieval assistant for a mountain-climbing corpus, paired with a 20-question evaluation harness to compare retrieval approaches.",
+    "tags": ["RAG", "Reranking", "Evaluation"],
+    "href": "https://github.com/hassanhashmi16/rag-assistant"
+  },
+  {
+    "id": "research-briefing-agent",
+    "title": "Research Briefing Agent",
+    "type": "Agent systems · CLI",
+    "summary": "A tool-based research workflow with checkpoints, memory, execution budgets, and recovery when work is interrupted.",
+    "tags": ["Agents", "Tool use", "Reliability"],
+    "href": "https://github.com/hassanhashmi16/research-agent"
+  }
+]

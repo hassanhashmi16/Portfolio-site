@@ -1,18 +1,14 @@
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 
 export const metadata = {
-  title: "Portfolio of Hassan Hashmi – Full Stack Web Developer",
-  description: "Hi, I’m Hassan Hashmi, a web developer specializing in Next.js, Mongodb, and modern UI design. Explore my projects, skills, and experience. Frontend & full-stack developer portfolio of Hassan Hashmi. Skilled in Next.js, React, Node.js, and building fast, responsive web apps. Discover projects and skills of Hassan Hashmi, a Next.js developer passionate about building sleek, scalable, and user-friendly web experiences"
+  title: "Hassan Hashmi — AI Engineer & Full-Stack Developer",
+  description: "Hassan Hashmi is an AI engineer and full-stack developer exploring retrieval, agent systems, evaluation, and useful software.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`antialiased`}
-      >
-        <Navbar />
+      <body>
         {children}
       </body>
     </html>
