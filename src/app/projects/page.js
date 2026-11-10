@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
+import SiteHeader from "@/components/SiteHeader";
 import projects from "@/data/portfolio-projects.json";
 
 export const metadata = {
@@ -11,16 +11,11 @@ export const metadata = {
 export default function ProjectsPage() {
   return (
     <main className="archive-page">
-      <header className="site-header archive-header">
-        <Link className="wordmark" href="/#home" aria-label="Hassan Hashmi, home">HH<span>.</span></Link>
-        <nav className="desktop-nav" aria-label="Main navigation"><Link href="/#about">About</Link><Link href="/#experience">Experience</Link><Link href="/#work">Work</Link><Link href="/#writing">Writing</Link></nav>
-        <div className="header-actions"><Link className="contact-link" href="/#contact">Let’s talk <ArrowUpRight size={14} /></Link><ThemeToggle /></div>
-      </header>
-      <nav className="mobile-nav archive-mobile-nav" aria-label="Mobile navigation"><Link href="/#about">About</Link><Link href="/#experience">Experience</Link><Link href="/#work">Work</Link><Link href="/#writing">Writing</Link></nav>
+      <SiteHeader archive />
       <section className="archive-intro section-wrap">
         <Link className="back-link" href="/#work"><ArrowLeft size={15} /> Back to the home page</Link>
         <p className="eyebrow">A growing archive · {String(projects.length).padStart(2, "0")} entries</p>
-        <h1>Selected<br /><em>work & ideas.</em></h1>
+        <h1>Selected<br /><em>work &amp; ideas.</em></h1>
         <p className="archive-lede">Projects are ordered by the work I want to share right now. Each one has its own question, constraints, and way of thinking through the details.</p>
       </section>
       <section className="archive-list section-wrap" aria-label="Project archive">

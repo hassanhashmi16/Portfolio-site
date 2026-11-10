@@ -13,7 +13,11 @@
     "tags": ["AI agents", "Retrieval", "Evidence"],
     "status": "Local app · source available",
     "href": "https://github.com/hassanhashmi16/whythediff",
-    "diagram": "request-flow"
+    "live": null,
+    "media": [
+      { "kind": "diagram", "type": "request-flow" },
+      { "kind": "stat", "value": "4", "label": "Prepared Flask cases", "note": "documented · inferred · unresolved" }
+    ]
   },
   {
     "id": "eight-thousanders-rag",
@@ -29,7 +33,11 @@
     "tags": ["RAG", "Reranking", "Evaluation"],
     "status": "Local app · source available",
     "href": "https://github.com/hassanhashmi16/rag-assistant",
-    "diagram": "retrieval"
+    "live": null,
+    "media": [
+      { "kind": "diagram", "type": "retrieval" },
+      { "kind": "stat", "value": "20", "label": "Labelled evaluation questions", "note": "recall@5 · MRR · nDCG" }
+    ]
   },
   {
     "id": "research-briefing-agent",
@@ -45,6 +53,10 @@
     "tags": ["Agents", "Tool use", "Reliability"],
     "status": "Local CLI · source available",
     "href": "https://github.com/hassanhashmi16/research-agent",
-    "diagram": "agent-loop"
+    "live": null,
+    "media": [
+      { "kind": "diagram", "type": "agent-loop" },
+      { "kind": "stat", "value": "2", "label": "Documented demos", "note": "forced-stop resume · cross-run memory" }
+    ]
   }
 ]

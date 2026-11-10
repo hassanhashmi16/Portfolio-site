@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Github, Linkedin } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
+import SiteHeader from "@/components/SiteHeader";
 import Reveal from "@/components/Reveal";
 import ProjectDiagram from "@/components/ProjectDiagram";
 import TimelineProgress from "@/components/TimelineProgress";
+import ContactForm from "@/components/ContactForm";
 import projects from "@/data/portfolio-projects.json";
 import experience from "@/data/experience.json";
 
@@ -13,7 +14,11 @@ const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/hassansaeedhashmi", icon: Linkedin },
 ];
 
-const marqueeWords = ["retrieval", "agents", "evaluation", "systems", "evidence", "full-stack", "research", "craft"];
+const exampleNotes = [
+  { num: "01", kicker: "Build note", title: "Why citations still need checking", meta: "Nov 2026 · 6 min" },
+  { num: "02", kicker: "Milestone", title: "A bounded queue for long investigations", meta: "Oct 2026 · 4 min" },
+  { num: "03", kicker: "Draft", title: "Notes on evaluating retrieval", meta: "Draft" },
+];
 
 function SectionLabel({ number, children }) {
   return (
@@ -25,11 +30,33 @@ function SectionLabel({ number, children }) {
   );
 }
 
+function Media({ item }) {
+  if (item.kind === "diagram") {
+    return (
+      <div className="gallery-item is-diagram">
+        <ProjectDiagram type={item.type} />
+      </div>
+    );
+  }
+  if (item.kind === "stat") {
+    return (
+      <div className="gallery-item is-stat">
+        <span className="stat-value">{item.value}</span>
+        <span className="stat-body">
+          <span className="stat-label">{item.label}</span>
+          {item.note && <span className="stat-note">{item.note}</span>}
+        </span>
+      </div>
+    );
+  }
+  return null;
+}
+
 function ProjectBlock({ project, index }) {
   return (
     <Reveal className={`work-block${index % 2 === 1 ? " is-flipped" : ""}`} delay={index * 80}>
-      <div className="work-media">
-        <ProjectDiagram type={project.diagram} />
+      <div className="work-gallery">
+        {project.media.map((item, i) => <Media key={i} item={item} />)}
       </div>
       <div className="work-copy">
         <span className="work-num">{String(index + 1).padStart(2, "0")}</span>
@@ -44,9 +71,16 @@ function ProjectBlock({ project, index }) {
           {project.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
         </div>
         <div className="work-actions">
-          <a className="text-link" href={project.href} target="_blank" rel="noreferrer">
-            View source <ArrowUpRight size={15} />
-          </a>
+          <span className="work-links">
+            {project.live && (
+              <a className="text-link" href={project.live} target="_blank" rel="noreferrer">
+                Live site <ArrowUpRight size={15} />
+              </a>
+            )}
+            <a className="text-link" href={project.href} target="_blank" rel="noreferrer">
+              View source <ArrowUpRight size={15} />
+            </a>
+          </span>
           <span className="work-status">{project.status}</span>
         </div>
       </div>
@@ -57,47 +91,26 @@ function ProjectBlock({ project, index }) {
 export default function Home() {
   return (
     <main>
-      <header className="site-header">
-        <Link className="wordmark" href="#home" aria-label="Hassan Hashmi, home">HH<span>.</span></Link>
-        <nav className="desktop-nav" aria-label="Main navigation">
-          <a href="#about">About</a><a href="#experience">Experience</a><a href="#work">Work</a><a href="#writing">Writing</a>
-        </nav>
-        <div className="header-actions">
-          <a className="contact-link" href="#contact">Let’s talk <ArrowUpRight size={14} /></a>
-          <ThemeToggle />
-        </div>
-      </header>
-      <nav className="mobile-nav" aria-label="Mobile navigation"><a href="#about">About</a><a href="#experience">Experience</a><a href="#work">Work</a><a href="#writing">Writing</a></nav>
+      <SiteHeader />
 
-      {/* 1 — HERO: full-bleed portrait scene */}
-      <section className="hero" id="home">
-        <Reveal className="hero-portrait" delay={140}>
-          <Image src="/images/hassan-portrait.webp" alt="Portrait of Hassan Hashmi" fill priority sizes="(max-width: 760px) 100vw, 46vw" className="portrait-image" />
-          <span className="portrait-mark" aria-hidden="true">H.</span>
-          <div className="portrait-caption"><span>HASSAN HASHMI</span><span>AI · ENGINEERING · SYSTEMS</span></div>
-        </Reveal>
+      {/* 1 — HERO: portrait in a framed panel, space on the side */}
+      <section className="hero section-wrap" id="home">
         <div className="hero-copy">
           <Reveal><p className="eyebrow"><span className="status-dot" /> AI engineer · full-stack developer</p></Reveal>
           <Reveal delay={90}><h1>I build thoughtful<br /><em>AI experiences.</em></h1></Reveal>
-          <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel clear, useful, and human.</p></Reveal>
+          <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel <strong>clear, useful, and human.</strong></p></Reveal>
           <Reveal delay={260} className="hero-actions">
             <a className="text-link" href="#work">Explore selected work <ArrowDown size={15} /></a>
             <span className="hero-note">Based in Lahore, Pakistan</span>
           </Reveal>
         </div>
+        <Reveal className="portrait-frame" delay={120}>
+          <Image src="/images/hassan-portrait.webp" alt="Portrait of Hassan Hashmi" fill priority sizes="(max-width: 760px) 88vw, 42vw" className="portrait-image" />
+          <div className="portrait-caption"><span>HASSAN HASHMI</span><span>AI · ENGINEERING · SYSTEMS</span></div>
+          <span className="portrait-mark" aria-hidden="true">H.</span>
+        </Reveal>
         <div className="hero-footer"><span>Independent thinking, carefully built.</span><span>Scroll to explore ↓</span></div>
       </section>
-
-      {/* chapter break */}
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[0, 1].map((copy) => (
-            <span className="marquee-group" key={copy}>
-              {marqueeWords.map((word) => <span className="marquee-item" key={word + copy}>{word}<i>·</i></span>)}
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* 2 — ABOUT: editorial manifesto spread */}
       <section className="about" id="about">
@@ -108,10 +121,10 @@ export default function Home() {
               <h2 className="about-quote">Curiosity is where the work <em>begins.</em></h2>
             </Reveal>
             <Reveal delay={120} className="about-rail">
-              <p className="about-lede">I’m a computer science student at FAST NUCES Lahore, drawn to the space where software engineering meets applied AI. I like understanding how a system works all the way through, then shaping it into something people can actually use.</p>
-              <p className="about-lede">My work moves between retrieval, agents, evaluation, and the full-stack product details that make those ideas useful outside a notebook.</p>
+              <p className="about-lede">I’m a computer science student at <strong>FAST NUCES Lahore</strong>, drawn to the space where software engineering meets <span className="mark">applied AI</span>. I like understanding how a system works all the way through, then shaping it into something people can actually use.</p>
+              <p className="about-lede">My work moves between <strong>retrieval, agents, and evaluation</strong>, and the full-stack product details that make those ideas useful outside a notebook.</p>
               <dl className="about-facts">
-                <div><dt>Education</dt><dd>B.Sc. Computer Science<br />FAST NUCES, Lahore</dd></div>
+                <div><dt>Education</dt><dd>B.Sc. Computer Science<br /><strong>FAST NUCES, Lahore</strong></dd></div>
                 <div><dt>Expected</dt><dd>June 2028</dd></div>
                 <div><dt>Focus</dt><dd>Retrieval · agents · evaluation</dd></div>
                 <div><dt>Based in</dt><dd>Lahore, Pakistan</dd></div>
@@ -133,7 +146,10 @@ export default function Home() {
             {experience.map((item, index) => (
               <Reveal className="tl-entry" key={item.id} delay={index * 100}>
                 <span className="tl-dot" aria-hidden="true" />
-                <div className="tl-year">{item.year}</div>
+                <div className="tl-meta">
+                  <div className="tl-year">{item.year}</div>
+                  <span className="tl-date">{item.date}</span>
+                </div>
                 <div className="tl-body">
                   <h3>{item.role}</h3>
                   <p className="tl-org">{item.organization}</p>
@@ -146,7 +162,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4 — WORK: alternating case-study blocks with media */}
+      {/* 4 — WORK: alternating case-study blocks with multiple media */}
       <section className="work" id="work">
         <div className="section-wrap">
           <SectionLabel number="03">Selected work</SectionLabel>
@@ -161,7 +177,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5 — WRITING: magazine table of contents */}
+      {/* 5 — WRITING: magazine table of contents with example entries */}
       <section className="writing" id="writing">
         <div className="section-wrap">
           <SectionLabel number="04">Writing & notes</SectionLabel>
@@ -170,26 +186,39 @@ export default function Home() {
             <Reveal delay={100}><p>Notes from the work: useful ideas, turning points, and the occasional lesson that took longer than expected.</p></Reveal>
           </div>
           <Reveal delay={140} className="toc">
-            <div className="toc-row is-empty">
-              <span className="toc-num">01</span>
-              <span className="toc-title">Issue 01 — forthcoming</span>
-              <span className="toc-meta">In progress</span>
-            </div>
-            <p className="toc-note">The first notes are taking shape. Articles, milestones, and build notes will appear here as they’re ready.</p>
+            {exampleNotes.map((note) => (
+              <article className="toc-row" key={note.num}>
+                <span className="toc-num">{note.num}</span>
+                <span className="toc-title-wrap">
+                  <span className="toc-kicker">{note.kicker}</span>
+                  <span className="toc-title">{note.title}</span>
+                </span>
+                <span className="toc-meta">{note.meta}</span>
+              </article>
+            ))}
+            <p className="toc-note">Example entries shown above — these are placeholders. Real articles, milestones, and build notes will replace them.</p>
           </Reveal>
         </div>
       </section>
 
-      {/* 6 — CONTACT: inverted closing poster */}
+      {/* 6 — CONTACT: inverted poster with form */}
       <section className="contact" id="contact">
         <div className="section-wrap contact-inner">
           <p className="eyebrow">Have a thoughtful problem in mind?</p>
           <h2>Let’s make<br /><em>something matter.</em></h2>
-          <a className="contact-email" href="mailto:hassansaeed0050@gmail.com">hassansaeed0050@gmail.com</a>
-          <div className="contact-socials">
-            {socials.map(({ label, href, icon: Icon }) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer"><Icon size={16} strokeWidth={1.5} />{label}<ArrowUpRight size={14} /></a>
-            ))}
+          <div className="contact-grid">
+            <div className="contact-info">
+              <p className="contact-blurb">I’m always interested in good questions, ambitious ideas, and conversations about building useful things with AI.</p>
+              <a className="contact-email" href="mailto:hassansaeed0050@gmail.com">hassansaeed0050@gmail.com</a>
+              <div className="contact-socials">
+                {socials.map(({ label, href, icon: Icon }) => (
+                  <a key={label} href={href} target="_blank" rel="noreferrer"><Icon size={16} strokeWidth={1.5} />{label}<ArrowUpRight size={14} /></a>
+                ))}
+              </div>
+            </div>
+            <Reveal delay={100} className="contact-form-wrap">
+              <ContactForm />
+            </Reveal>
           </div>
         </div>
         <footer className="site-footer section-wrap"><Link className="wordmark" href="#home">HH<span>.</span></Link><span>Designed with intention. Built with curiosity.</span><a href="#home">Back to top ↑</a></footer>
