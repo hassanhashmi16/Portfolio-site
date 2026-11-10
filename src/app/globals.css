@@ -212,6 +212,9 @@ strong { font-weight: 600; }
 .contact-blurb { max-width: 40ch; margin: 0 0 28px; color: rgba(242, 240, 234, .72); font-size: 15px; line-height: 1.8; }
 .contact-email { display: inline-block; font-family: var(--serif); font-size: clamp(22px, 3vw, 44px); letter-spacing: -.02em; border-bottom: 1px solid rgba(242, 240, 234, .35); padding-bottom: .1em; transition: border-color .3s ease; }
 .contact-email:hover { border-color: #f2f0ea; }
+.contact .text-link { border-color: rgba(242, 240, 234, .35); }
+.contact .text-link:hover { border-color: #f2f0ea; }
+.contact-resume { margin-top: 22px; display: inline-flex; }
 .contact-socials { display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 48px); margin-top: clamp(36px, 5vw, 60px); padding-top: 22px; border-top: 1px solid rgba(242, 240, 234, .16); }
 .contact-socials a { display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .72; transition: opacity .3s ease; }
 .contact-socials a:hover { opacity: 1; }

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight, Github, Linkedin } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Download, Github, Linkedin } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import Reveal from "@/components/Reveal";
 import ProjectDiagram from "@/components/ProjectDiagram";
@@ -101,6 +101,7 @@ export default function Home() {
           <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel <strong className="mark">clear, useful, and human</strong>.</p></Reveal>
           <Reveal delay={260} className="hero-actions">
             <a className="text-link" href="#work">Explore selected work <ArrowDown size={15} /></a>
+            <a className="text-link" href="/resume.pdf" download>Résumé <Download size={15} /></a>
             <span className="hero-note">Based in Lahore, Pakistan</span>
           </Reveal>
         </div>
@@ -210,6 +211,7 @@ export default function Home() {
             <div className="contact-info">
               <p className="contact-blurb">I’m always interested in good questions, ambitious ideas, and conversations about building useful things with AI.</p>
               <a className="contact-email" href="mailto:hassansaeed0050@gmail.com">hassansaeed0050@gmail.com</a>
+              <a className="text-link contact-resume" href="/resume.pdf" download>Download résumé <Download size={15} /></a>
               <div className="contact-socials">
                 {socials.map(({ label, href, icon: Icon }) => (
                   <a key={label} href={href} target="_blank" rel="noreferrer"><Icon size={16} strokeWidth={1.5} />{label}<ArrowUpRight size={14} /></a>
