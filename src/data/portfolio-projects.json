@@ -3,24 +3,48 @@
     "id": "whythediff",
     "title": "WhyTheDiff",
     "type": "AI product · evidence-led investigation",
+    "lede": "Follow public code changes back to why they happened.",
     "summary": "An application that follows public GitHub code, history, and discussions to produce cited explanations. Findings distinguish documented reasons, inferences, and unresolved questions.",
+    "highlights": [
+      "Cited reports that separate documented, inferred, and unresolved findings",
+      "Bounded job queue, checkpoint recovery, and owner-scoped history",
+      "Quote and grounding checks before a claim survives"
+    ],
     "tags": ["AI agents", "Retrieval", "Evidence"],
-    "href": "https://github.com/hassanhashmi16/whythediff"
+    "status": "Local app · source available",
+    "href": "https://github.com/hassanhashmi16/whythediff",
+    "diagram": "request-flow"
   },
   {
     "id": "eight-thousanders-rag",
     "title": "Eight-Thousanders RAG Assistant",
     "type": "Retrieval · evaluation",
-    "summary": "A focused retrieval assistant for a mountain-climbing corpus, paired with a 20-question evaluation harness to compare retrieval approaches.",
+    "lede": "Answers over a focused corpus, with the retrieval exposed.",
+    "summary": "A focused retrieval assistant for a mountain-climbing corpus, pairing dense and keyword search with reciprocal rank fusion and reranking, plus a 20-question evaluation harness.",
+    "highlights": [
+      "Dense and keyword retrieval fused with reciprocal rank fusion",
+      "Cross-encoder reranking to narrow evidence before generation",
+      "Labelled evaluation comparing retrieval configurations"
+    ],
     "tags": ["RAG", "Reranking", "Evaluation"],
-    "href": "https://github.com/hassanhashmi16/rag-assistant"
+    "status": "Local app · source available",
+    "href": "https://github.com/hassanhashmi16/rag-assistant",
+    "diagram": "retrieval"
   },
   {
     "id": "research-briefing-agent",
     "title": "Research Briefing Agent",
     "type": "Agent systems · CLI",
-    "summary": "A tool-based research workflow with checkpoints, memory, execution budgets, and recovery when work is interrupted.",
+    "lede": "Web research that survives being interrupted.",
+    "summary": "A tool-based research workflow with checkpoints, session memory, execution budgets, and recovery when work is interrupted.",
+    "highlights": [
+      "Validated tool dispatch through a typed registry",
+      "SQLite checkpoints that resume a run after a forced stop",
+      "Step and token budgets with no-progress stopping"
+    ],
     "tags": ["Agents", "Tool use", "Reliability"],
-    "href": "https://github.com/hassanhashmi16/research-agent"
+    "status": "Local CLI · source available",
+    "href": "https://github.com/hassanhashmi16/research-agent",
+    "diagram": "agent-loop"
   }
 ]

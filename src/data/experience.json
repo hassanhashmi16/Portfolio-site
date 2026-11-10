@@ -1,6 +1,7 @@
 [
   {
     "id": "rahnor-labs",
+    "year": "2026",
     "date": "MAY — JUL 2026",
     "role": "Software Engineering Intern",
     "organization": "Rahnor Labs · Remote",
@@ -9,7 +10,8 @@
   },
   {
     "id": "independent-work",
-    "date": "2025",
+    "year": "2025",
+    "date": "2025 — PRESENT",
     "role": "Independent developer",
     "organization": "Freelance · Lahore",
     "description": "Building web products and exploring applied AI through independent projects and client work.",
