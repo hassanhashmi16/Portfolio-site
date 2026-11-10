@@ -6,8 +6,7 @@ import Reveal from "@/components/Reveal";
 import ProjectDiagram from "@/components/ProjectDiagram";
 import TimelineProgress from "@/components/TimelineProgress";
 import ContactForm from "@/components/ContactForm";
-import projects from "@/data/portfolio-projects.json";
-import experience from "@/data/experience.json";
+import { getProjects, getExperience } from "@/lib/content";
 
 const socials = [
   { label: "GitHub", href: "https://github.com/hassanhashmi16", icon: Github },
@@ -88,7 +87,9 @@ function ProjectBlock({ project, index }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const projects = await getProjects();
+  const experience = await getExperience();
   return (
     <main>
       <SiteHeader />

@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
-import projects from "@/data/portfolio-projects.json";
+import { getProjects } from "@/lib/content";
 
 export const metadata = {
   title: "Selected Work",
   description: "AI engineering and software projects by Hassan Hashmi.",
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await getProjects();
   return (
     <main className="archive-page">
       <SiteHeader archive />
