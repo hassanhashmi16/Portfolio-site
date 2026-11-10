@@ -20,6 +20,15 @@ export default async function PanelLayout({ children }) {
           </form>
         </nav>
       </header>
+      <nav className="admin-sectionnav" aria-label="Content sections">
+        <a href="/admin">Overview</a>
+        <a href="/admin/intro">Intro</a>
+        <a href="/admin/about">About</a>
+        <a href="/admin/experience">Experience</a>
+        <a href="/admin/projects">Projects</a>
+        <a href="/admin/writing">Writing</a>
+        <a href="/admin/contact">Contact</a>
+      </nav>
       <div className="admin-main">{children}</div>
     </div>
   );
