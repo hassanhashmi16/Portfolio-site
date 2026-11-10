@@ -127,6 +127,29 @@ values ('media', 'media', true)
 on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------------
+-- site_content (single row): section-wise prose for Intro/About/Contact and
+-- section headings. Merged over code defaults in src/lib/site-defaults.js.
+-- ---------------------------------------------------------------------------
+create table if not exists public.site_content (
+  id         int primary key default 1 check (id = 1),
+  data       jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_site_content_updated on public.site_content;
+create trigger trg_site_content_updated before update on public.site_content
+  for each row execute function public.set_updated_at();
+
+alter table public.site_content enable row level security;
+drop policy if exists "public read site_content" on public.site_content;
+create policy "public read site_content" on public.site_content
+  for select using (true);
+
+insert into public.site_content (id, data)
+values (1, '{}'::jsonb)
+on conflict (id) do nothing;
+
+-- ---------------------------------------------------------------------------
 -- Seed with the current portfolio content (safe to re-run)
 -- ---------------------------------------------------------------------------
 insert into public.projects (slug, title, type, lede, summary, highlights, tags, status, href, live, diagram, media, published, position)

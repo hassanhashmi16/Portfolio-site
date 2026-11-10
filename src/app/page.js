@@ -3,15 +3,13 @@ import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Download, Github, Linkedin } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import Reveal from "@/components/Reveal";
+import RichText from "@/components/RichText";
 import ProjectDiagram from "@/components/ProjectDiagram";
 import TimelineProgress from "@/components/TimelineProgress";
 import ContactForm from "@/components/ContactForm";
-import { getProjects, getExperience } from "@/lib/content";
+import { getProjects, getExperience, getSiteContent } from "@/lib/content";
 
-const socials = [
-  { label: "GitHub", href: "https://github.com/hassanhashmi16", icon: Github },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/hassansaeedhashmi", icon: Linkedin },
-];
+const socialIcons = { GitHub: Github, LinkedIn: Linkedin };
 
 const exampleNotes = [
   { num: "01", kicker: "Build note", title: "Why citations still need checking", meta: "Nov 2026 · 6 min" },
@@ -88,8 +86,12 @@ function ProjectBlock({ project, index }) {
 }
 
 export default async function Home() {
-  const projects = await getProjects();
-  const experience = await getExperience();
+  const [site, projects, experience] = await Promise.all([
+    getSiteContent(),
+    getProjects(),
+    getExperience(),
+  ]);
+
   return (
     <main>
       <SiteHeader />
@@ -97,18 +99,18 @@ export default async function Home() {
       {/* 1 — HERO: portrait in a framed panel, space on the side */}
       <section className="hero section-wrap" id="home">
         <div className="hero-copy">
-          <Reveal><p className="eyebrow"><span className="status-dot" /> AI engineer · full-stack developer</p></Reveal>
-          <Reveal delay={90}><h1>I build thoughtful<br /><em>AI experiences.</em></h1></Reveal>
-          <Reveal delay={180}><p className="hero-summary">I’m Hassan — an AI engineer and full-stack developer interested in making complex systems feel <strong className="mark">clear, useful, and human</strong>.</p></Reveal>
+          <Reveal><p className="eyebrow"><span className="status-dot" /> {site.intro.eyebrow}</p></Reveal>
+          <Reveal delay={90}><RichText as="h1" text={site.intro.headline} /></Reveal>
+          <Reveal delay={180}><RichText as="p" className="hero-summary" text={site.intro.summary} /></Reveal>
           <Reveal delay={260} className="hero-actions">
             <a className="text-link" href="#work">Explore selected work <ArrowDown size={15} /></a>
-            <a className="text-link" href="/resume.pdf" download>Résumé <Download size={15} /></a>
-            <span className="hero-note">Based in Lahore, Pakistan</span>
+            <a className="text-link" href={site.intro.resumeUrl} download>Résumé <Download size={15} /></a>
+            <span className="hero-note">{site.intro.location}</span>
           </Reveal>
         </div>
         <Reveal className="portrait-frame" delay={120}>
-          <Image src="/images/hassan-portrait.webp" alt="Portrait of Hassan Hashmi" fill priority sizes="(max-width: 760px) 88vw, 42vw" className="portrait-image" />
-          <div className="portrait-caption"><span>HASSAN HASHMI</span><span>AI · ENGINEERING · SYSTEMS</span></div>
+          <Image src="/images/hassan-portrait.webp" alt={site.intro.portraitAlt} fill priority sizes="(max-width: 760px) 88vw, 42vw" className="portrait-image" />
+          <div className="portrait-caption"><span>{site.intro.captionLeft}</span><span>{site.intro.captionRight}</span></div>
           <span className="portrait-mark" aria-hidden="true">H.</span>
         </Reveal>
         <div className="hero-footer"><span>Independent thinking, carefully built.</span><span>Scroll to explore ↓</span></div>
@@ -117,19 +119,22 @@ export default async function Home() {
       {/* 2 — ABOUT: editorial manifesto spread */}
       <section className="about">
         <div className="section-wrap" id="about">
-          <SectionLabel number="01">A little about me</SectionLabel>
+          <SectionLabel number="01">{site.about.label}</SectionLabel>
           <div className="about-spread">
             <Reveal className="about-quote-wrap">
-              <h2 className="about-quote">Curiosity is where the work <em>begins.</em></h2>
+              <RichText as="h2" className="about-quote" text={site.about.quote} />
             </Reveal>
             <Reveal delay={120} className="about-rail">
-              <p className="about-lede">I’m a computer science student at <strong>FAST NUCES Lahore</strong>, drawn to the space where software engineering meets <span className="mark">applied AI</span>. I like understanding how a system works all the way through, then shaping it into something people can actually use.</p>
-              <p className="about-lede">My work moves between <strong>retrieval, agents, and evaluation</strong>, and the full-stack product details that make those ideas useful outside a notebook.</p>
+              {site.about.paragraphs.map((paragraph, i) => (
+                <RichText key={i} as="p" className="about-lede" text={paragraph} />
+              ))}
               <dl className="about-facts">
-                <div><dt>Education</dt><dd>B.Sc. Computer Science<br /><strong>FAST NUCES, Lahore</strong></dd></div>
-                <div><dt>Expected</dt><dd>June 2028</dd></div>
-                <div><dt>Focus</dt><dd>Retrieval · agents · evaluation</dd></div>
-                <div><dt>Based in</dt><dd>Lahore, Pakistan</dd></div>
+                {site.about.facts.map((fact, i) => (
+                  <div key={i}>
+                    <dt>{fact.label}</dt>
+                    <dd><RichText text={fact.value} /></dd>
+                  </div>
+                ))}
               </dl>
             </Reveal>
           </div>
@@ -139,10 +144,10 @@ export default async function Home() {
       {/* 3 — EXPERIENCE: scroll-drawn timeline */}
       <section className="experience">
         <div className="section-wrap" id="experience">
-          <SectionLabel number="02">Experience</SectionLabel>
+          <SectionLabel number="02">{site.experience.label}</SectionLabel>
           <div className="exp-head">
-            <Reveal><h2>Where I’ve<br /><em>been building.</em></h2></Reveal>
-            <Reveal delay={100}><p>Different teams and contexts, one steady curiosity about how useful software gets made.</p></Reveal>
+            <Reveal><RichText as="h2" text={site.experience.heading} /></Reveal>
+            <Reveal delay={100}><p>{site.experience.intro}</p></Reveal>
           </div>
           <TimelineProgress>
             {experience.map((item, index) => (
@@ -167,25 +172,25 @@ export default async function Home() {
       {/* 4 — WORK: alternating case-study blocks with multiple media */}
       <section className="work">
         <div className="section-wrap" id="work">
-          <SectionLabel number="03">Selected work</SectionLabel>
+          <SectionLabel number="03">{site.work.label}</SectionLabel>
           <div className="work-head">
-            <Reveal><h2>Ideas, made<br /><em>inspectable.</em></h2></Reveal>
-            <Reveal delay={100}><p>A few ongoing explorations in AI engineering, research workflows, and the systems around them.</p></Reveal>
+            <Reveal><RichText as="h2" text={site.work.heading} /></Reveal>
+            <Reveal delay={100}><p>{site.work.intro}</p></Reveal>
           </div>
           <div className="work-blocks">
             {projects.map((project, index) => <ProjectBlock key={project.id} project={project} index={index} />)}
           </div>
-          <a className="text-link work-more" href="https://github.com/hassanhashmi16" target="_blank" rel="noreferrer">Browse all repositories <ArrowUpRight size={15} /></a>
+          <a className="text-link work-more" href={site.work.browseUrl} target="_blank" rel="noreferrer">{site.work.browseLabel} <ArrowUpRight size={15} /></a>
         </div>
       </section>
 
-      {/* 5 — WRITING: magazine table of contents with example entries */}
+      {/* 5 — WRITING: magazine table of contents (placeholder entries until Phase 3) */}
       <section className="writing">
         <div className="section-wrap" id="writing">
-          <SectionLabel number="04">Writing & notes</SectionLabel>
+          <SectionLabel number="04">{site.writing.label}</SectionLabel>
           <div className="writing-head">
-            <Reveal><h2>Notes &<br /><em>marginalia.</em></h2></Reveal>
-            <Reveal delay={100}><p>Notes from the work: useful ideas, turning points, and the occasional lesson that took longer than expected.</p></Reveal>
+            <Reveal><RichText as="h2" text={site.writing.heading} /></Reveal>
+            <Reveal delay={100}><p>{site.writing.intro}</p></Reveal>
           </div>
           <Reveal delay={140} className="toc">
             {exampleNotes.map((note) => (
@@ -206,17 +211,24 @@ export default async function Home() {
       {/* 6 — CONTACT: inverted poster with form */}
       <section className="contact">
         <div className="section-wrap contact-inner" id="contact">
-          <p className="eyebrow">Have a thoughtful problem in mind?</p>
-          <h2>Let’s make<br /><em>something matter.</em></h2>
+          <p className="eyebrow">{site.contact.eyebrow}</p>
+          <RichText as="h2" text={site.contact.heading} />
           <div className="contact-grid">
             <div className="contact-info">
-              <p className="contact-blurb">I’m always interested in good questions, ambitious ideas, and conversations about building useful things with AI.</p>
-              <a className="contact-email" href="mailto:hassansaeed0050@gmail.com">hassansaeed0050@gmail.com</a>
-              <a className="text-link contact-resume" href="/resume.pdf" download>Download résumé <Download size={15} /></a>
+              <p className="contact-blurb">{site.contact.blurb}</p>
+              <a className="contact-email" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+              <a className="text-link contact-resume" href={site.contact.resumeUrl} download>{site.contact.resumeLabel} <Download size={15} /></a>
               <div className="contact-socials">
-                {socials.map(({ label, href, icon: Icon }) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer"><Icon size={16} strokeWidth={1.5} />{label}<ArrowUpRight size={14} /></a>
-                ))}
+                {site.contact.socials.map((social) => {
+                  const Icon = socialIcons[social.label];
+                  return (
+                    <a key={social.label} href={social.url} target="_blank" rel="noreferrer">
+                      {Icon ? <Icon size={16} strokeWidth={1.5} /> : null}
+                      {social.label}
+                      <ArrowUpRight size={14} />
+                    </a>
+                  );
+                })}
               </div>
             </div>
             <Reveal delay={100} className="contact-form-wrap">
@@ -224,7 +236,7 @@ export default async function Home() {
             </Reveal>
           </div>
         </div>
-        <footer className="site-footer section-wrap"><Link className="wordmark" href="#home">HH<span>.</span></Link><span>Designed with intention. Built with curiosity.</span><a href="#home">Back to top ↑</a></footer>
+        <footer className="site-footer section-wrap"><Link className="wordmark" href="#home">HH<span>.</span></Link><span>{site.footer.note}</span><a href="#home">{site.footer.backToTop}</a></footer>
       </section>
     </main>
   );

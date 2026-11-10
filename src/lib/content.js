@@ -1,6 +1,7 @@
 import projectsJson from "@/data/portfolio-projects.json";
 import experienceJson from "@/data/experience.json";
 import { publicClient, supabaseConfigured } from "@/lib/supabase";
+import { defaultContent } from "@/lib/site-defaults";
 
 // Public content reads. Falls back to the bundled JSON when Supabase is not
 // configured yet, so the site works before the database is set up.
@@ -65,5 +66,35 @@ export async function getExperience() {
     return data.map(mapExperience);
   } catch {
     return experienceJson;
+  }
+}
+
+function mergeSite(overrides) {
+  const source = overrides || {};
+  const merged = {};
+  for (const key of Object.keys(defaultContent)) {
+    const base = defaultContent[key];
+    const extra = source[key];
+    if (base && typeof base === "object" && !Array.isArray(base) && extra && typeof extra === "object") {
+      merged[key] = { ...base, ...extra };
+    } else {
+      merged[key] = extra || base;
+    }
+  }
+  return merged;
+}
+
+export async function getSiteContent() {
+  if (!supabaseConfigured) return defaultContent;
+  try {
+    const { data, error } = await publicClient()
+      .from("site_content")
+      .select("data")
+      .eq("id", 1)
+      .maybeSingle();
+    if (error || !data || !data.data) return defaultContent;
+    return mergeSite(data.data);
+  } catch {
+    return defaultContent;
   }
 }
