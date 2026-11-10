@@ -9,8 +9,6 @@
   --accent: #5f615d;
   /* portrait panel background — change freely to any colour */
   --portrait-bg: #303136;
-  /* highlighter swipe behind important lines */
-  --hl: rgba(32, 32, 30, .14);
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
   --mono: "SFMono-Regular", ui-monospace, "Cascadia Code", Consolas, monospace;
@@ -28,7 +26,6 @@
   --line-strong: #5b5a55;
   --accent: #c4c3ba;
   --portrait-bg: #303136;
-  --hl: rgba(232, 231, 225, .16);
 }
 
 * { box-sizing: border-box; }
@@ -49,19 +46,16 @@ button { color: inherit; font: inherit; }
 img { display: block; }
 strong { font-weight: 600; }
 
-/* highlighter swipe on important lines (like a marker on paper) */
+/* emphasis underline on important lines */
 .mark {
-  background-image: linear-gradient(var(--hl), var(--hl));
+  background-image: linear-gradient(var(--ink), var(--ink));
   background-repeat: no-repeat;
-  background-position: 0 0;
-  background-size: 100% 100%;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  padding: .04em .18em;
-  margin: 0 -.18em;
-  transition: background-size .8s cubic-bezier(.2, .7, .2, 1);
+  background-position: 0 100%;
+  background-size: 100% 2px;
+  padding-bottom: .07em;
+  transition: background-size .9s cubic-bezier(.2, .7, .2, 1);
 }
-.reveal:not(.is-visible) .mark { background-size: 0% 100%; }
+.reveal:not(.is-visible) .mark { background-size: 0% 2px; }
 
 /* ---------- header ---------- */
 .site-header {
@@ -258,7 +252,7 @@ strong { font-weight: 600; }
 
 @media (scripting: none) {
   .reveal { opacity: 1; filter: none; transform: none; }
-  .mark { background-size: 100% 100%; }
+  .mark { background-size: 100% 2px; }
 }
 
 @media (min-width: 1500px) { .hero { min-height: min(1080px, 100svh); } }
@@ -284,7 +278,7 @@ strong { font-weight: 600; }
 }
 
 @media (max-width: 760px) {
-  html { scroll-padding-top: 76px; }
+  html { scroll-padding-top: 104px; }
   .site-header { height: 70px; padding: 0 22px; }
   .desktop-nav { display: none; }
   .mobile-nav { position: absolute; top: 100%; left: 0; right: 0; height: 35px; display: flex; align-items: center; gap: clamp(17px, 5vw, 30px); overflow-x: auto; padding: 0 24px; border-bottom: 1px solid var(--line); background: var(--paper); }
@@ -317,5 +311,5 @@ strong { font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .reveal { opacity: 1; filter: none; transform: none; }
-  .mark { background-size: 100% 100%; }
+  .mark { background-size: 100% 2px; }
 }

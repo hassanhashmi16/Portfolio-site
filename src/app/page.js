@@ -113,8 +113,8 @@ export default function Home() {
       </section>
 
       {/* 2 — ABOUT: editorial manifesto spread */}
-      <section className="about" id="about">
-        <div className="section-wrap">
+      <section className="about">
+        <div className="section-wrap" id="about">
           <SectionLabel number="01">A little about me</SectionLabel>
           <div className="about-spread">
             <Reveal className="about-quote-wrap">
@@ -135,8 +135,8 @@ export default function Home() {
       </section>
 
       {/* 3 — EXPERIENCE: scroll-drawn timeline */}
-      <section className="experience" id="experience">
-        <div className="section-wrap">
+      <section className="experience">
+        <div className="section-wrap" id="experience">
           <SectionLabel number="02">Experience</SectionLabel>
           <div className="exp-head">
             <Reveal><h2>Where I’ve<br /><em>been building.</em></h2></Reveal>
@@ -163,8 +163,8 @@ export default function Home() {
       </section>
 
       {/* 4 — WORK: alternating case-study blocks with multiple media */}
-      <section className="work" id="work">
-        <div className="section-wrap">
+      <section className="work">
+        <div className="section-wrap" id="work">
           <SectionLabel number="03">Selected work</SectionLabel>
           <div className="work-head">
             <Reveal><h2>Ideas, made<br /><em>inspectable.</em></h2></Reveal>
@@ -178,8 +178,8 @@ export default function Home() {
       </section>
 
       {/* 5 — WRITING: magazine table of contents with example entries */}
-      <section className="writing" id="writing">
-        <div className="section-wrap">
+      <section className="writing">
+        <div className="section-wrap" id="writing">
           <SectionLabel number="04">Writing & notes</SectionLabel>
           <div className="writing-head">
             <Reveal><h2>Notes &<br /><em>marginalia.</em></h2></Reveal>
@@ -202,8 +202,8 @@ export default function Home() {
       </section>
 
       {/* 6 — CONTACT: inverted poster with form */}
-      <section className="contact" id="contact">
-        <div className="section-wrap contact-inner">
+      <section className="contact">
+        <div className="section-wrap contact-inner" id="contact">
           <p className="eyebrow">Have a thoughtful problem in mind?</p>
           <h2>Let’s make<br /><em>something matter.</em></h2>
           <div className="contact-grid">
