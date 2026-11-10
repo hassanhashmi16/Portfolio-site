@@ -4,7 +4,7 @@ import SiteHeader from "@/components/SiteHeader";
 import projects from "@/data/portfolio-projects.json";
 
 export const metadata = {
-  title: "Selected Work — Hassan Hashmi",
+  title: "Selected Work",
   description: "AI engineering and software projects by Hassan Hashmi.",
 };
 
