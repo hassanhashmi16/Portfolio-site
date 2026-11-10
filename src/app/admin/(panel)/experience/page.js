@@ -13,7 +13,7 @@ export default async function ExperienceHeaderPage({ searchParams }) {
       values={site.experience}
       saved={sp?.saved === "1"}
       error={sp?.error === "1"}
-      note="Timeline entries will be editable in the next phase."
+      note={<>Timeline entries are managed in the <a href="/admin/experience/entries">Experience entries list</a>.</>}
     />
   );
 }

@@ -1,5 +1,6 @@
 import { adminClient, adminConfigured } from "@/lib/supabase-admin";
 import { deleteProject, moveProject, toggleProject } from "../actions";
+import ConfirmButton from "@/components/ConfirmButton";
 
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false, follow: false } };
@@ -59,7 +60,7 @@ export default async function ProjectsListPage() {
               </form>
               <form action={deleteProject}>
                 <input type="hidden" name="id" value={project.id} />
-                <button className="admin-mini is-danger" type="submit">Delete</button>
+                <ConfirmButton className="admin-mini is-danger">Delete</ConfirmButton>
               </form>
             </span>
           </div>
