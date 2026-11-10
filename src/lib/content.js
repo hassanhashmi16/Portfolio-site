@@ -1,6 +1,6 @@
 import projectsJson from "@/data/portfolio-projects.json";
 import experienceJson from "@/data/experience.json";
-import { anonClient, supabaseConfigured } from "@/lib/supabase";
+import { publicClient, supabaseConfigured } from "@/lib/supabase";
 
 // Public content reads. Falls back to the bundled JSON when Supabase is not
 // configured yet, so the site works before the database is set up.
@@ -41,7 +41,7 @@ function mapExperience(row) {
 export async function getProjects() {
   if (!supabaseConfigured) return projectsJson;
   try {
-    const { data, error } = await anonClient()
+    const { data, error } = await publicClient()
       .from("projects")
       .select("*")
       .eq("published", true)
@@ -56,7 +56,7 @@ export async function getProjects() {
 export async function getExperience() {
   if (!supabaseConfigured) return experienceJson;
   try {
-    const { data, error } = await anonClient()
+    const { data, error } = await publicClient()
       .from("experience")
       .select("*")
       .eq("published", true)

@@ -11,13 +11,16 @@ the private `/admin` area becomes available.
    This creates the tables, row-level security, the `media` storage bucket, and
    seeds your current projects/experience.
 
-## 2. Copy the keys
+## 2. Copy the keys (new API keys)
 
-In **Project Settings → API**, copy:
+Legacy `anon` / `service_role` keys are deprecated by the end of 2026. In
+**Project Settings → API Keys → Publishable and secret API keys**, copy:
 
-- Project URL
-- `anon` public key
-- `service_role` secret key
+- **Project URL**
+- **Publishable** key (`sb_publishable_…`) — safe in the browser, RLS applies
+- **Secret** key (`sb_secret_…`) — server-only, bypasses RLS
+
+If your project only shows legacy keys, click **Create new API keys**.
 
 ## 3. Add environment variables
 
@@ -25,16 +28,18 @@ Create `.env.local` in the project root (next to `package.json`):
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=the-anon-key
-SUPABASE_SERVICE_ROLE_KEY=the-service-role-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key
+SUPABASE_SECRET_KEY=sb_secret_your-key
 
 # Admin login (choose your own)
 ADMIN_PASSWORD=choose-a-strong-password
 ADMIN_SESSION_SECRET=a-long-random-string
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` are
-server-only — never expose them to the browser.
+`SUPABASE_SECRET_KEY`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` are
+server-only — never expose them to the browser. The legacy
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` names are still
+read as a fallback during the transition, but prefer the new keys.
 
 ## 4. Restart
 
