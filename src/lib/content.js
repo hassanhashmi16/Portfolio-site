@@ -69,6 +69,31 @@ export async function getExperience() {
   }
 }
 
+function mapWriting(row) {
+  return {
+    id: row.slug || row.id,
+    title: row.title,
+    kind: row.kind || "Note",
+    excerpt: row.excerpt || "",
+    publishedAt: row.published_at || null,
+  };
+}
+
+export async function getWriting() {
+  if (!supabaseConfigured) return [];
+  try {
+    const { data, error } = await publicClient()
+      .from("writing")
+      .select("*")
+      .eq("published", true)
+      .order("position", { ascending: true });
+    if (error || !data) return [];
+    return data.map(mapWriting);
+  } catch {
+    return [];
+  }
+}
+
 function mergeSite(overrides) {
   const source = overrides || {};
   const merged = {};

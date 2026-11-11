@@ -7,7 +7,7 @@ import RichText from "@/components/RichText";
 import ProjectDiagram from "@/components/ProjectDiagram";
 import TimelineProgress from "@/components/TimelineProgress";
 import ContactForm from "@/components/ContactForm";
-import { getProjects, getExperience, getSiteContent } from "@/lib/content";
+import { getProjects, getExperience, getSiteContent, getWriting } from "@/lib/content";
 
 const socialIcons = { GitHub: Github, LinkedIn: Linkedin };
 
@@ -16,6 +16,13 @@ const exampleNotes = [
   { num: "02", kicker: "Milestone", title: "A bounded queue for long investigations", meta: "Oct 2026 · 4 min" },
   { num: "03", kicker: "Draft", title: "Notes on evaluating retrieval", meta: "Draft" },
 ];
+
+function formatWritingDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
 
 function SectionLabel({ number, children }) {
   return (
@@ -86,11 +93,21 @@ function ProjectBlock({ project, index }) {
 }
 
 export default async function Home() {
-  const [site, projects, experience] = await Promise.all([
+  const [site, projects, experience, writing] = await Promise.all([
     getSiteContent(),
     getProjects(),
     getExperience(),
+    getWriting(),
   ]);
+
+  const writingRows = writing.length
+    ? writing.map((note, i) => ({
+        num: String(i + 1).padStart(2, "0"),
+        kicker: note.kind,
+        title: note.title,
+        meta: formatWritingDate(note.publishedAt),
+      }))
+    : exampleNotes;
 
   return (
     <main>
@@ -193,7 +210,7 @@ export default async function Home() {
             <Reveal delay={100}><p>{site.writing.intro}</p></Reveal>
           </div>
           <Reveal delay={140} className="toc">
-            {exampleNotes.map((note) => (
+            {writingRows.map((note) => (
               <article className="toc-row" key={note.num}>
                 <span className="toc-num">{note.num}</span>
                 <span className="toc-title-wrap">
@@ -203,7 +220,9 @@ export default async function Home() {
                 <span className="toc-meta">{note.meta}</span>
               </article>
             ))}
-            <p className="toc-note">Example entries shown above — these are placeholders. Real articles, milestones, and build notes will replace them.</p>
+            {writing.length === 0 ? (
+              <p className="toc-note">Example entries shown above — placeholders until you publish notes in the admin.</p>
+            ) : null}
           </Reveal>
         </div>
       </section>

@@ -13,7 +13,7 @@ export default async function WritingHeaderPage({ searchParams }) {
       values={site.writing}
       saved={sp?.saved === "1"}
       error={sp?.error === "1"}
-      note="Individual notes will be editable in a later phase."
+      note={<>Notes are managed in the <a href="/admin/writing/entries">Writing notes list</a>.</>}
     />
   );
 }
