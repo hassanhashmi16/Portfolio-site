@@ -171,6 +171,8 @@ strong { font-weight: 600; }
 .diagram svg { width: 100%; height: 100%; overflow: visible; transition: transform .7s cubic-bezier(.2, .7, .2, 1); }
 .work-block:hover .diagram svg { transform: scale(1.03); }
 .gallery-item.is-stat { display: flex; align-items: baseline; gap: 18px; padding: clamp(16px, 2.2vw, 26px) clamp(18px, 2.4vw, 28px); }
+.gallery-item.is-image { padding: 0; background: var(--surface); }
+.gallery-image { display: block; width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 .stat-value { font-family: var(--serif); font-size: clamp(34px, 4vw, 54px); line-height: .9; letter-spacing: -.03em; color: var(--ink); }
 .stat-body { display: flex; flex-direction: column; gap: 4px; }
 .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
@@ -384,6 +386,10 @@ textarea.admin-input { resize: vertical; }
 .admin-saved { color: #1a7f37; font-size: 13px; margin: 0 0 4px; }
 .admin-note-spaced { margin: 0 0 18px; }
 .admin-panel .admin-note a { text-decoration: underline; }
+.admin-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.admin-thumb { margin: 0; border: 1px solid var(--line); padding: 8px; display: flex; flex-direction: column; gap: 8px; background: var(--paper); }
+.admin-thumb img { width: 100%; height: 96px; object-fit: cover; display: block; }
+.admin-input-mini { padding: 6px 8px; font-size: 12px; }
 @media (max-width: 720px) {
   .admin-table-head { display: none; }
   .admin-row { grid-template-columns: 1fr; gap: 10px; padding: 16px 0; }

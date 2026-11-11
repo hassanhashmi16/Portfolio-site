@@ -32,8 +32,20 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+function parseImages(value) {
+  try {
+    const arr = JSON.parse(String(value || "[]"));
+    if (!Array.isArray(arr)) return [];
+    return arr
+      .filter((item) => item && item.kind === "image" && typeof item.src === "string" && item.src)
+      .map((item) => ({ kind: "image", src: item.src, alt: String(item.alt || "") }));
+  } catch {
+    return [];
+  }
+}
+
 function buildMedia(formData) {
-  const media = [];
+  const media = parseImages(formData.get("images"));
   const diagram = str(formData, "diagram");
   if (diagram) media.push({ kind: "diagram", type: diagram });
   const statValue = str(formData, "statValue");

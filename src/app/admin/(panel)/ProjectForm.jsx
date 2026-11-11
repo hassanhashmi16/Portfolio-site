@@ -1,4 +1,5 @@
 import { saveProject } from "./actions";
+import MediaManager from "@/components/admin/MediaManager";
 
 function getId(project) {
   return project?.id && typeof project.id === "string" && project.id.includes("-") ? project.id : null;
@@ -7,6 +8,9 @@ function getId(project) {
 export default function ProjectForm({ project = null }) {
   const media = Array.isArray(project?.media) ? project.media : [];
   const stat = media.find((m) => m.kind === "stat") || {};
+  const initialImages = media
+    .filter((m) => m.kind === "image" && m.src)
+    .map((m) => ({ kind: "image", src: m.src, alt: m.alt || "" }));
   const id = getId(project);
 
   return (
@@ -93,6 +97,8 @@ export default function ProjectForm({ project = null }) {
           </label>
         </div>
       </fieldset>
+
+      <MediaManager initial={initialImages} folder="projects" />
 
       <div className="admin-grid2">
         <label className="admin-field">

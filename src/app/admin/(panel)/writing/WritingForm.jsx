@@ -1,4 +1,5 @@
 import { saveWriting } from "./actions";
+import SingleImage from "@/components/admin/SingleImage";
 
 function dateValue(value) {
   if (!value) return "";
@@ -36,10 +37,7 @@ export default function WritingForm({ note = null }) {
       </label>
 
       <div className="admin-grid2">
-        <label className="admin-field">
-          <span>Cover image URL (optional)</span>
-          <input className="admin-input" name="coverUrl" defaultValue={note?.cover_url || ""} />
-        </label>
+        <SingleImage name="coverUrl" initial={note?.cover_url || ""} folder="writing" label="Cover image (optional)" />
         <label className="admin-field">
           <span>Published date (YYYY-MM-DD)</span>
           <input className="admin-input" name="publishedDate" defaultValue={dateValue(note?.published_at)} placeholder="2026-11-01" />

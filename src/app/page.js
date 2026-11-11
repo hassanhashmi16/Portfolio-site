@@ -53,6 +53,13 @@ function Media({ item }) {
       </div>
     );
   }
+  if (item.kind === "image" && item.src) {
+    return (
+      <div className="gallery-item is-image">
+        <Image src={item.src} alt={item.alt || ""} width={1280} height={960} sizes="(max-width: 820px) 100vw, 480px" className="gallery-image" />
+      </div>
+    );
+  }
   return null;
 }
 
