@@ -10,6 +10,7 @@ const cards = [
   { href: "/admin/projects", key: "work", label: "Projects" },
   { href: "/admin/writing", key: "writing" },
   { href: "/admin/contact", key: "contact" },
+  { href: "/admin/settings", key: "settings" },
 ];
 
 export default function AdminOverview() {

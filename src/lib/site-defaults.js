@@ -57,6 +57,10 @@ export const defaultContent = {
       { label: "LinkedIn", url: "https://www.linkedin.com/in/hassansaeedhashmi" },
     ],
   },
+  settings: {
+    availability: "Open to remote AI engineering internships and junior LLM application roles.",
+    resumeUrl: "/resume.pdf",
+  },
   footer: {
     note: "Designed with intention. Built with curiosity.",
     backToTop: "Back to top ↑",

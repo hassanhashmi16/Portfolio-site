@@ -128,7 +128,9 @@ export default async function Home() {
           <Reveal delay={180}><RichText as="p" className="hero-summary" text={site.intro.summary} /></Reveal>
           <Reveal delay={260} className="hero-actions">
             <a className="text-link" href="#work">Explore selected work <ArrowDown size={15} /></a>
-            <a className="text-link" href={site.intro.resumeUrl} download>Résumé <Download size={15} /></a>
+            {site.settings.resumeUrl ? (
+              <a className="text-link" href={site.settings.resumeUrl} download>Résumé <Download size={15} /></a>
+            ) : null}
             <span className="hero-note">{site.intro.location}</span>
           </Reveal>
         </div>
@@ -243,7 +245,10 @@ export default async function Home() {
             <div className="contact-info">
               <p className="contact-blurb">{site.contact.blurb}</p>
               <a className="contact-email" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
-              <a className="text-link contact-resume" href={site.contact.resumeUrl} download>{site.contact.resumeLabel} <Download size={15} /></a>
+              {site.settings.availability ? <p className="contact-availability">{site.settings.availability}</p> : null}
+              {site.settings.resumeUrl ? (
+                <a className="text-link contact-resume" href={site.settings.resumeUrl} download>{site.contact.resumeLabel} <Download size={15} /></a>
+              ) : null}
               <div className="contact-socials">
                 {site.contact.socials.map((social) => {
                   const Icon = socialIcons[social.label];

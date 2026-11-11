@@ -1,7 +1,7 @@
 // Field schemas and (de)serializers for the section-wise content admin.
 // Only allowlisted fields are ever read from or written to site_content.
 
-export const contentSections = ["intro", "about", "experience", "work", "writing", "contact"];
+export const contentSections = ["intro", "about", "experience", "work", "writing", "contact", "settings"];
 
 export const sectionMeta = {
   intro: { kicker: "Section 01", title: "Intro", description: "Hero eyebrow, headline, summary, portrait captions and résumé link." },
@@ -9,7 +9,8 @@ export const sectionMeta = {
   experience: { kicker: "Section 03", title: "Experience", description: "Timeline heading and intro. Entries are managed in the Experience list." },
   work: { kicker: "Section 04", title: "Selected work", description: "Work section heading, intro and the repositories link." },
   writing: { kicker: "Section 05", title: "Writing", description: "Writing section heading and intro." },
-  contact: { kicker: "Section 06", title: "Contact", description: "Closing pitch, email, résumé link and social links." },
+  contact: { kicker: "Section 06", title: "Contact", description: "Closing pitch, email and social links." },
+  settings: { kicker: "Settings", title: "Résumé & availability", description: "Upload the public résumé PDF and set your availability line." },
 };
 
 const MARKUP = "Use **bold**, *italic*, ==highlight==, and a new line for a line break.";
@@ -20,7 +21,6 @@ export const fields = {
     { name: "headline", label: "Headline", type: "textarea", rows: 3, maxLength: 160, hint: MARKUP },
     { name: "summary", label: "Summary", type: "textarea", rows: 4, maxLength: 320, hint: MARKUP },
     { name: "location", label: "Location line", type: "text", maxLength: 60 },
-    { name: "resumeUrl", label: "Résumé URL", type: "text", maxLength: 200 },
     { name: "portraitAlt", label: "Portrait alt text", type: "text", maxLength: 120 },
     { name: "captionLeft", label: "Portrait caption · left", type: "text", maxLength: 40 },
     { name: "captionRight", label: "Portrait caption · right", type: "text", maxLength: 40 },
@@ -54,8 +54,11 @@ export const fields = {
     { name: "blurb", label: "Blurb", type: "textarea", rows: 3, maxLength: 260 },
     { name: "email", label: "Email", type: "text", maxLength: 120 },
     { name: "resumeLabel", label: "Résumé link label", type: "text", maxLength: 40 },
-    { name: "resumeUrl", label: "Résumé URL", type: "text", maxLength: 200 },
     { name: "socials", label: "Social links", type: "socials", rows: 4, maxLength: 400, hint: "One per line: Label | URL" },
+  ],
+  settings: [
+    { name: "availability", label: "Availability", type: "textarea", rows: 3, maxLength: 200 },
+    { name: "resumeUrl", label: "Résumé PDF", type: "resume" },
   ],
 };
 

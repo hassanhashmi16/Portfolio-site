@@ -28,6 +28,7 @@ export default async function PanelLayout({ children }) {
         <a href="/admin/projects">Projects</a>
         <a href="/admin/writing">Writing</a>
         <a href="/admin/contact">Contact</a>
+        <a href="/admin/settings">Settings</a>
       </nav>
       <div className="admin-main">{children}</div>
     </div>
